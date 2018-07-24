@@ -20,17 +20,6 @@ import com.demo.service.DataService;
 @ComponentScan(Constant.BASE_PACKAGE)
 public class DemoApplication {
 
-	@Autowired
-	private DataService dataService;
-
-	public DataService getDataService() {
-		return dataService;
-	}
-
-	public void setDataService(DataService dataService) {
-		this.dataService = dataService;
-	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
