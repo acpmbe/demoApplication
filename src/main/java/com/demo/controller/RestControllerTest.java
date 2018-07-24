@@ -70,7 +70,7 @@ public class RestControllerTest {
 		NatTypeMst natTypeMst = dataService.getNatTypeById(id);
 		if (natTypeMst == null) {
 			logger.error("nature id {} not found.", id);
-			return new ResponseEntity("User with id " + id + " not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity("Nature id " + id + " not found", HttpStatus.NOT_FOUND);
 		}
 		ReqNatTypeMst reqNatTypeMst = new ReqNatTypeMst();
 		convertVoToBean(natTypeMst, reqNatTypeMst);
