@@ -96,7 +96,7 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 	 */
 	@Override
 	public String[] getEntityBasePackages() {
-		return new String[] { "com.demo.valueobject" };
+		return new String[] { Constant.ENTITY_BASE_PACKAGE };
 	}
 
 	@Override
