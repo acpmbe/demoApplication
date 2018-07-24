@@ -1,6 +1,5 @@
 package com.demo.controller;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.demo.requestBean.ReqNatTypeMst;
 import com.demo.service.DataService;
@@ -91,8 +87,7 @@ public class RestControllerTest {
 	@DeleteMapping("/nature/{id}")
 	public ResponseEntity<Object> deleteNature(@PathVariable long id) {
 		dataService.deleteNatType(id);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(String.valueOf(id)).buildAndExpand().toUri();
-		return ResponseEntity.created(location).build();
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	/***
@@ -103,15 +98,13 @@ public class RestControllerTest {
 	 * @return
 	 */
 	@PostMapping("/nature")
-	public ResponseEntity<?> createNature(@RequestBody ReqNatTypeMst reqNatTypeMst, UriComponentsBuilder ucBuilder) {
-		HttpHeaders headers = new HttpHeaders();
+	public ResponseEntity<String> createNature(@RequestBody ReqNatTypeMst reqNatTypeMst) {
 
 		logger.info("Creating nature : {}", reqNatTypeMst);
 		NatTypeMst natTypeMst = new NatTypeMst();
 		this.convertBeanToVo(reqNatTypeMst, natTypeMst);
 		dataService.saveNatType(natTypeMst);
-		headers.setLocation(ucBuilder.path("/api/nature").buildAndExpand(natTypeMst.getNatTypeMstId()).toUri());
-		return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 
 	}
 
@@ -126,7 +119,7 @@ public class RestControllerTest {
 	public ResponseEntity<?> updateNature(@RequestBody ReqNatTypeMst reqNatTypeMst, @PathVariable long id) {
 		NatTypeMst natTypeMst = new NatTypeMst();
 		reqNatTypeMst.setNatTypeMstId(id);
-		this.convertVoToBean(natTypeMst, reqNatTypeMst);
+		this.convertBeanToVo(reqNatTypeMst, natTypeMst);
 		dataService.updateNatType(natTypeMst);
 		return new ResponseEntity<ReqNatTypeMst>(reqNatTypeMst, HttpStatus.OK);
 	}
