@@ -22,14 +22,6 @@ public class DataServiceImpl implements DataService {
 	@Autowired
 	private DataDao dataDao;
 
-	public DataDao getDataDao() {
-		return dataDao;
-	}
-
-	public void setDataDao(DataDao dataDao) {
-		this.dataDao = dataDao;
-	}
-
 	@Override
 	public List<NatTypeMst> getAllNatTypeList() {
 		List<NatTypeMst> lstNatTypeMst = new ArrayList<NatTypeMst>();

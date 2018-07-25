@@ -35,14 +35,6 @@ public class RestControllerTest {
 	@Autowired
 	DataService dataService;
 
-	public DataService getDataService() {
-		return dataService;
-	}
-
-	public void setDataService(DataService dataService) {
-		this.dataService = dataService;
-	}
-
 	/**
 	 * Retrive All Nature Type with their details
 	 * 
