@@ -16,3 +16,9 @@ There are total five CRUD API is available
 3) Update Nature
 4) Get all Nature
 5) Get All Nature
+
+
+----
+#Junit Test Cases
+
+5 CRUD Test Cases has been added.
