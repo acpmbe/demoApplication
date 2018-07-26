@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
@@ -33,6 +34,13 @@ import com.demo.constants.Constant;
 @EnableCassandraRepositories(basePackages = { Constant.BASE_PACKAGE })
 public class CassandraConfig extends AbstractCassandraConfiguration {
 
+	@Value("${spring.data.cassandra.hosts}")
+	String cassandraHosts;
+	@Value("${spring.data.cassandra.port}")
+	String cassandraPort;
+	@Value("${spring.data.cassandra.keyspace-name}")
+	String cassandraKeySpace;
+
 	/***
 	 * Methods include
 	 * (mappingContext,converter,session,cassandraTemplate,cluster) are used to
@@ -53,10 +61,17 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 	public CassandraSessionFactoryBean session() {
 		CassandraSessionFactoryBean session = new CassandraSessionFactoryBean();
 		session.setCluster(cluster().getObject());
-		session.setKeyspaceName(Constant.KEYSPACE);
+		// session.setKeyspaceName(Constant.KEYSPACE);
+		session.setKeyspaceName(getKeyspaceName());
 		session.setConverter(converter());
 		session.setSchemaAction(SchemaAction.NONE);
 		return session;
+	}
+
+	@Override
+	protected List getStartupScripts() {
+		return Collections.singletonList("CREATE KEYSPACE IF NOT EXISTS " + getKeyspaceName() + " WITH replication = {"
+				+ " 'class': 'SimpleStrategy', " + " 'replication_factor': '3' " + "};");
 	}
 
 	@Bean
@@ -69,7 +84,8 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 	public CassandraCqlClusterFactoryBean cluster() {
 		CassandraCqlClusterFactoryBean bean = new CassandraCqlClusterFactoryBean();
 		bean.setKeyspaceCreations(getKeyspaceCreations());
-		bean.setContactPoints(Constant.NODES);
+		// bean.setContactPoints(Constant.NODES);
+		bean.setContactPoints(cassandraHosts);
 		bean.setUsername(Constant.USERNAME);
 		bean.setPassword(Constant.PASSWORD);
 		return bean;
@@ -87,7 +103,8 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 
 	@Override
 	protected String getKeyspaceName() {
-		return Constant.KEYSPACE;
+		// return Constant.KEYSPACE;
+		return cassandraKeySpace;
 	}
 
 	/***
@@ -101,14 +118,12 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 
 	@Override
 	protected List<CreateKeyspaceSpecification> getKeyspaceCreations() {
-		return Collections.singletonList(CreateKeyspaceSpecification.createKeyspace(Constant.KEYSPACE).ifNotExists()
+		// return
+		// Collections.singletonList(CreateKeyspaceSpecification.createKeyspace(Constant.KEYSPACE).ifNotExists().with(KeyspaceOption.DURABLE_WRITES,
+		// true).withSimpleReplication());
+		return Collections.singletonList(CreateKeyspaceSpecification.createKeyspace(getKeyspaceName()).ifNotExists()
 				.with(KeyspaceOption.DURABLE_WRITES, true).withSimpleReplication());
-	}
 
-	@Override
-	protected List getStartupScripts() {
-		return Collections.singletonList("CREATE KEYSPACE IF NOT EXISTS " + Constant.KEYSPACE + " WITH replication = {"
-				+ " 'class': 'SimpleStrategy', " + " 'replication_factor': '3' " + "};");
 	}
 
 	/***
@@ -117,7 +132,10 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 
 	@Override
 	protected List<DropKeyspaceSpecification> getKeyspaceDrops() {
-		return Arrays.asList(DropKeyspaceSpecification.dropKeyspace(Constant.KEYSPACE));
+		// return
+		// Arrays.asList(DropKeyspaceSpecification.dropKeyspace(Constant.KEYSPACE));
+		return Arrays.asList(DropKeyspaceSpecification.dropKeyspace(getKeyspaceName()));
+
 	}
 
 }
